@@ -76,20 +76,22 @@ function RadioButton(props: any) {
     <View
       style={[
         {
-          height: 10,
-          width: 10,
-          borderRadius: 10,
+          display: 'flex',
+          height: 20,
+          width: 20,
+          borderRadius: 12,
           borderWidth: 2,
           borderColor: 'green',
-          marginRight: 10,
+          alignItems: 'center',
+          justifyContent: 'center',
         },
         props.style,
       ]}>
       {props.selected ? (
         <View
           style={{
-            height: 0,
-            width: 0,
+            height: 10,
+            width: 10,
             borderRadius: 6,
             backgroundColor: 'green',
           }}
