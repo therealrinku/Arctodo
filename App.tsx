@@ -86,6 +86,7 @@ const App = () => {
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    ...styles.MainScreenBox,
   };
 
   const [data, setData]: any = useState([]);
@@ -105,7 +106,9 @@ const App = () => {
           flexDirection: 'row',
           justifyContent: 'space-between',
         }}>
-        <Text style={{fontSize: 20, flex: 15}}>Rinktodo :))</Text>
+        <Text style={{fontSize: 22, flex: 15, fontWeight: 'bold'}}>
+          Arctodo
+        </Text>
         <Pressable>
           <Image
             style={{width: 20, height: 20, flex: 1}}
@@ -121,11 +124,12 @@ const App = () => {
             0 && (
             <Text
               style={{
-                padding: 10,
+                paddingVertical: 10,
+                paddingHorizontal: 6,
                 fontWeight: 'bold',
-                textDecorationLine: 'underline',
+                fontSize: 16,
               }}>
-              Todos todo
+              {new Date().toLocaleDateString()} - Today
             </Text>
           )}
           {data
@@ -144,7 +148,7 @@ const App = () => {
                   />
                   <Text
                     style={{
-                      color: d.completed ? 'gray' : 'black',
+                      color: d.completed ? 'gray' : 'white',
                       textDecorationLine: d.completed ? 'line-through' : 'none',
                     }}
                     onPress={() => {
@@ -161,10 +165,10 @@ const App = () => {
           {data.filter((d: {completed: boolean}) => d.completed).length > 0 && (
             <Text
               style={{
-                paddingHorizontal: 10,
-                paddingVertical: 20,
+                paddingVertical: 10,
+                paddingHorizontal: 6,
                 fontWeight: 'bold',
-                textDecorationLine: 'underline',
+                fontSize: 16,
               }}>
               Completed Todos
             </Text>
@@ -269,6 +273,11 @@ const styles = StyleSheet.create({
     padding: 10,
     borderColor: '#343434',
     borderRadius: 10,
+  },
+  MainScreenBox: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
   },
 });
 
