@@ -76,22 +76,20 @@ function RadioButton(props: any) {
     <View
       style={[
         {
-          display: 'flex',
-          height: 20,
-          width: 20,
-          borderRadius: 12,
+          height: 10,
+          width: 10,
+          borderRadius: 10,
           borderWidth: 2,
           borderColor: 'green',
-          alignItems: 'center',
-          justifyContent: 'center',
+          marginRight: 10,
         },
         props.style,
       ]}>
       {props.selected ? (
         <View
           style={{
-            height: 10,
-            width: 10,
+            height: 0,
+            width: 0,
             borderRadius: 6,
             backgroundColor: 'green',
           }}
@@ -171,7 +169,7 @@ const App = () => {
                 fontWeight: 'bold',
                 fontSize: 16,
               }}>
-              {new Date().toLocaleDateString()} - Today
+              Todos
             </Text>
           )}
           {data
