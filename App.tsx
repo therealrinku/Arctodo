@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function TodoInputView({onAdd, toggle, todos}: any) {
   const [input, setInput] = useState('');
@@ -44,8 +45,27 @@ function TodoInputView({onAdd, toggle, todos}: any) {
             ],
           );
         }
-        onAdd((prev: any) => [...prev, {todo: input, completed: false}]);
+
+        const newTodo = {todo: input, completed: false};
+        onAdd((prev: any) => [...prev, newTodo]);
         toggle();
+        const addToLocalStorage = async () => {
+          try {
+            const dto = JSON.stringify([...todos, newTodo]);
+            await AsyncStorage.setItem('todos', dto);
+          } catch (e) {
+            Alert.alert('Something went wrong', '', [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              {text: 'OK', onPress: () => console.log('OK Pressed')},
+            ]);
+          }
+        };
+
+        addToLocalStorage();
       }}
     />
   );
@@ -86,12 +106,34 @@ const App = () => {
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-    ...styles.MainScreenBox,
   };
 
   const [data, setData]: any = useState([]);
 
   const [showAddTodoBox, setShowAddTodoBox] = useState(false);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const data = await AsyncStorage.getItem('todos');
+
+        if (data !== null) {
+          setData(JSON.parse(data));
+        }
+      } catch (e) {
+        Alert.alert('Something went fishy', '', [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ]);
+      }
+    };
+
+    getData();
+  }, []);
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -273,11 +315,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderColor: '#343434',
     borderRadius: 10,
-  },
-  MainScreenBox: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
   },
 });
 
