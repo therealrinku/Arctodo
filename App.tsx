@@ -16,6 +16,8 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 
+const HappyImage = require('./assets/happy.png');
+
 function TodoInputView({onAdd, toggle, todos}: any) {
   const [input, setInput] = useState('');
 
@@ -111,23 +113,22 @@ const App = () => {
 
   useEffect(() => {
     const getData = async () => {
-      await AsyncStorage.setItem('todos', '');
-      // try {
-      //   const data = await AsyncStorage.getItem('todos');
+      try {
+        const data = await AsyncStorage.getItem('todos');
 
-      //   if (data !== null) {
-      //     setData(JSON.parse(data));
-      //   }
-      // } catch (e) {
-      //   Alert.alert('Something went fishy', '', [
-      //     {
-      //       text: 'Cancel',
-      //       onPress: () => console.log('Cancel Pressed'),
-      //       style: 'cancel',
-      //     },
-      //     {text: 'OK', onPress: () => console.log('OK Pressed')},
-      //   ]);
-      // }
+        if (data !== null) {
+          setData(JSON.parse(data));
+        }
+      } catch (e) {
+        Alert.alert('Something went fishy', '', [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ]);
+      }
     };
 
     getData();
@@ -159,8 +160,31 @@ const App = () => {
         </Pressable>
       </View>
       <ScrollView style={{height: '92%', paddingTop: 50}}>
+        {data.length === 0 && (
+          <View style={{paddingVertical: '70%'}}>
+            <Image
+              style={{
+                width: 50,
+                height: 50,
+                marginLeft: '44%',
+                marginBottom: 20,
+              }}
+              source={HappyImage}
+            />
+            <Text
+              style={{
+                fontSize: 17,
+                paddingHorizontal: 32,
+                textAlign: 'center',
+                fontWeight: 'bold',
+              }}>
+              Looks like you have got it all done.
+            </Text>
+          </View>
+        )}
+
         <View style={{padding: 15, height: '92%'}}>
-          {data.filter((d: {completed: boolean}) => !d.completed).length >
+          {data.filter((d: {completed: boolean}) => !d.completed).length !==
             0 && (
             <Text
               style={{
@@ -186,6 +210,12 @@ const App = () => {
                     size={25}
                     fillColor="green"
                     unfillColor="#FFFFFF"
+                    onLongPress={() => {
+                      let todosCopy = [...data];
+                      todosCopy = todosCopy.filter((_, index) => index !== i);
+                      AsyncStorage.setItem('todos', JSON.stringify(todosCopy));
+                      setData(todosCopy);
+                    }}
                     text={d.todo}
                     isChecked={d.completed}
                     iconStyle={{borderColor: 'red'}}
@@ -194,6 +224,7 @@ const App = () => {
                     onPress={() => {
                       const todosCopy = [...data];
                       todosCopy[i].completed = !todosCopy[i].completed;
+                      AsyncStorage.setItem('todos', JSON.stringify(todosCopy));
                       setData(todosCopy);
                     }}
                   />
@@ -201,7 +232,8 @@ const App = () => {
               );
             })}
 
-          {data.filter((d: {completed: boolean}) => d.completed).length > 0 && (
+          {data.filter((d: {completed: boolean}) => d.completed).length !==
+            0 && (
             <Text
               style={{
                 paddingVertical: 10,
@@ -224,6 +256,12 @@ const App = () => {
                   }}>
                   <BouncyCheckbox
                     size={25}
+                    onLongPress={() => {
+                      let todosCopy = [...data];
+                      todosCopy = todosCopy.filter((_, index) => index !== i);
+                      AsyncStorage.setItem('todos', JSON.stringify(todosCopy));
+                      setData(todosCopy);
+                    }}
                     fillColor="green"
                     unfillColor="#FFFFFF"
                     text={d.todo}
@@ -234,6 +272,7 @@ const App = () => {
                     onPress={() => {
                       const todosCopy = [...data];
                       todosCopy[i].completed = !todosCopy[i].completed;
+                      AsyncStorage.setItem('todos', JSON.stringify(todosCopy));
                       setData(todosCopy);
                     }}
                   />
