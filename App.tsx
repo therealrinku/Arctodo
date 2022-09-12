@@ -19,85 +19,81 @@ import BouncyCheckbox from 'react-native-bouncy-checkbox';
 function TodoInputView({onAdd, toggle, todos}: any) {
   const [input, setInput] = useState('');
 
-  return (
-    <TextInput
-      style={styles.input}
-      onChangeText={setInput}
-      value={input}
-      placeholder="Add new todo"
-      autoFocus
-      onEndEditing={toggle}
-      onSubmitEditing={() => {
-        const indexOfThisToday = todos.findIndex(
-          (t: {todo: string}) =>
-            t.todo.toLowerCase().trim() === input.toLowerCase().trim(),
-        );
-        if (indexOfThisToday >= 0) {
-          return Alert.alert(
-            'Todo alert exists with same name',
-            'Maybe you forgot :)',
-            [
-              {
-                text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
-                style: 'cancel',
-              },
-              {text: 'OK', onPress: () => console.log('OK Pressed')},
-            ],
-          );
-        }
+  const addTodo = () => {
+    const newTodo = {todo: input, completed: false};
+    onAdd((prev: any) => [...prev, newTodo]);
+    toggle();
+    const addToLocalStorage = async () => {
+      try {
+        const dto = JSON.stringify([...todos, newTodo]);
+        await AsyncStorage.setItem('todos', dto);
+      } catch (e) {
+        Alert.alert('Something went wrong', '', [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ]);
+      }
+    };
 
-        const newTodo = {todo: input, completed: false};
-        onAdd((prev: any) => [...prev, newTodo]);
-        toggle();
-        const addToLocalStorage = async () => {
-          try {
-            const dto = JSON.stringify([...todos, newTodo]);
-            await AsyncStorage.setItem('todos', dto);
-          } catch (e) {
-            Alert.alert('Something went wrong', '', [
-              {
-                text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
-                style: 'cancel',
-              },
-              {text: 'OK', onPress: () => console.log('OK Pressed')},
-            ]);
-          }
-        };
+    addToLocalStorage();
+  };
 
-        addToLocalStorage();
-      }}
-    />
-  );
-}
-
-function RadioButton(props: any) {
   return (
     <View
-      style={[
-        {
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        borderColor: 'green',
+        paddingRight: 15,
+      }}>
+      <TextInput
+        style={styles.input}
+        onChangeText={setInput}
+        value={input}
+        placeholder="Add new todo"
+        autoFocus
+        onEndEditing={toggle}
+        onSubmitEditing={() => {
+          const indexOfThisToday = todos.findIndex(
+            (t: {todo: string}) =>
+              t.todo.toLowerCase().trim() === input.toLowerCase().trim(),
+          );
+          if (indexOfThisToday >= 0) {
+            return Alert.alert(
+              'Todo alert exists with same name',
+              'Maybe you forgot :)',
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {text: 'OK', onPress: () => console.log('OK Pressed')},
+              ],
+            );
+          }
+
+          addTodo();
+        }}
+      />
+
+      <Pressable
+        onPress={addTodo}
+        style={{
+          width: '18%',
           display: 'flex',
-          height: 20,
-          width: 20,
-          borderRadius: 12,
-          borderWidth: 2,
-          borderColor: 'green',
+          height: '100%',
+          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-        },
-        props.style,
-      ]}>
-      {props.selected ? (
-        <View
-          style={{
-            height: 10,
-            width: 10,
-            borderRadius: 6,
-            backgroundColor: 'green',
-          }}
-        />
-      ) : null}
+        }}>
+        <Text style={{fontSize: 35}}>+</Text>
+      </Pressable>
     </View>
   );
 }
@@ -314,6 +310,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     borderColor: '#343434',
+    width: '80%',
     borderRadius: 10,
   },
 });
