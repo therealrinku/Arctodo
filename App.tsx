@@ -14,6 +14,7 @@ import {
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BouncyCheckbox from 'react-native-bouncy-checkbox';
 
 function TodoInputView({onAdd, toggle, todos}: any) {
   const [input, setInput] = useState('');
@@ -114,22 +115,23 @@ const App = () => {
 
   useEffect(() => {
     const getData = async () => {
-      try {
-        const data = await AsyncStorage.getItem('todos');
+      await AsyncStorage.setItem('todos', '');
+      // try {
+      //   const data = await AsyncStorage.getItem('todos');
 
-        if (data !== null) {
-          setData(JSON.parse(data));
-        }
-      } catch (e) {
-        Alert.alert('Something went fishy', '', [
-          {
-            text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
-          },
-          {text: 'OK', onPress: () => console.log('OK Pressed')},
-        ]);
-      }
+      //   if (data !== null) {
+      //     setData(JSON.parse(data));
+      //   }
+      // } catch (e) {
+      //   Alert.alert('Something went fishy', '', [
+      //     {
+      //       text: 'Cancel',
+      //       onPress: () => console.log('Cancel Pressed'),
+      //       style: 'cancel',
+      //     },
+      //     {text: 'OK', onPress: () => console.log('OK Pressed')},
+      //   ]);
+      // }
     };
 
     getData();
@@ -178,29 +180,28 @@ const App = () => {
             .filter((d: {completed: boolean}) => !d.completed)
             .map((d: {todo: string; completed: boolean}, i: number) => {
               return (
-                <Text
+                <View
                   key={d.todo}
                   style={{
                     paddingHorizontal: 5,
                     paddingVertical: 10,
                   }}>
-                  <RadioButton
-                    selected={d.completed}
-                    style={{marginRight: 10}}
-                  />
-                  <Text
-                    style={{
-                      color: d.completed ? 'gray' : 'white',
-                      textDecorationLine: d.completed ? 'line-through' : 'none',
-                    }}
+                  <BouncyCheckbox
+                    size={25}
+                    fillColor="green"
+                    unfillColor="#FFFFFF"
+                    text={d.todo}
+                    isChecked={d.completed}
+                    iconStyle={{borderColor: 'red'}}
+                    innerIconStyle={{borderWidth: 2}}
+                    textStyle={{fontFamily: 'JosefinSans-Regular'}}
                     onPress={() => {
                       const todosCopy = [...data];
                       todosCopy[i].completed = !todosCopy[i].completed;
                       setData(todosCopy);
-                    }}>
-                    {d.todo}
-                  </Text>
-                </Text>
+                    }}
+                  />
+                </View>
               );
             })}
 
@@ -219,29 +220,28 @@ const App = () => {
             .filter((d: {completed: boolean}) => d.completed)
             .map((d: {todo: string; completed: boolean}, i: number) => {
               return (
-                <Text
+                <View
                   key={d.todo}
                   style={{
                     paddingHorizontal: 5,
                     paddingVertical: 10,
                   }}>
-                  <RadioButton
-                    selected={d.completed}
-                    style={{marginRight: 10}}
-                  />
-                  <Text
-                    style={{
-                      color: d.completed ? 'gray' : 'black',
-                      textDecorationLine: d.completed ? 'line-through' : 'none',
-                    }}
+                  <BouncyCheckbox
+                    size={25}
+                    fillColor="green"
+                    unfillColor="#FFFFFF"
+                    text={d.todo}
+                    isChecked={d.completed}
+                    iconStyle={{borderColor: 'red'}}
+                    innerIconStyle={{borderWidth: 2}}
+                    textStyle={{fontFamily: 'JosefinSans-Regular'}}
                     onPress={() => {
                       const todosCopy = [...data];
                       todosCopy[i].completed = !todosCopy[i].completed;
                       setData(todosCopy);
-                    }}>
-                    {d.todo}
-                  </Text>
-                </Text>
+                    }}
+                  />
+                </View>
               );
             })}
         </View>
